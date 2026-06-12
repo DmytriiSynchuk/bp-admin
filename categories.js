@@ -20,7 +20,7 @@ window.bpAdminCategories = (function(){
 
   function loadCategories(silent) {
     if (!silent) {
-      listEl.innerHTML = '<div class="px-4 py-8 text-center text-sm text-slate-500"><div class="inline-block w-6 h-6 rounded-full border-[3px] border-brand-100 border-t-brand-600 animate-spin"></div></div>';
+      listEl.innerHTML = '<div class="w-full flex flex-col items-center justify-center gap-3 py-12 text-sm text-slate-500"><div class="w-8 h-8 rounded-full border-[3px] border-brand-100 border-t-brand-600 animate-spin"></div><span class="font-medium">Loading categories...</span></div>';
     }
     return api('list_categories').then(function(res){
       if (!res.success) {
@@ -38,53 +38,54 @@ window.bpAdminCategories = (function(){
   function renderList() {
     countEl.textContent = '(' + cached.length + ')';
     if (cached.length === 0) {
-      listEl.innerHTML = '<div class="px-4 py-8 text-center text-sm text-slate-400">No categories yet. Add one above.</div>';
+      listEl.innerHTML = '<div class="w-full px-4 py-12 text-center text-sm text-slate-400 border border-dashed border-slate-200 rounded-lg">No categories yet. Add one on the left.</div>';
       return;
     }
     listEl.innerHTML = '';
     cached.forEach(function(cat){
-      var row = document.createElement('div');
-      row.className = 'flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition';
+      var chip = document.createElement('div');
+      chip.className = 'bp-category-chip group inline-flex items-center gap-2 pl-3.5 pr-1.5 py-1.5 bg-brand-50 border border-brand-100 rounded-full text-sm font-medium text-brand-800 hover:border-brand-300 hover:bg-brand-100 transition';
 
       var nameSpan = document.createElement('span');
-      nameSpan.className = 'text-sm font-medium text-slate-800';
       nameSpan.textContent = cat.name;
 
       var actions = document.createElement('div');
-      actions.className = 'flex items-center gap-1';
+      actions.className = 'flex items-center gap-0.5';
 
       var editBtn = document.createElement('button');
-      editBtn.className = 'text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-md w-7 h-7 flex items-center justify-center transition';
+      editBtn.className = 'text-brand-700/50 hover:text-brand-700 hover:bg-white rounded-full w-6 h-6 flex items-center justify-center transition';
       editBtn.title = 'Rename';
       editBtn.innerHTML = pencilSvg;
-      editBtn.addEventListener('click', function(){
+      editBtn.addEventListener('click', function(e){
+        e.stopPropagation();
         var newName = prompt('Rename category:', cat.name);
         if (!newName || newName.trim() === '' || newName.trim() === cat.name) return;
         api('update_category', { id: cat.id, name: newName.trim() }).then(function(r){
-          if (r.success) { showToast('Category renamed'); loadCategories(true); }
+          if (r.success) { showToast('Category renamed'); loadCategories(); }
           else showToast(r.error || 'Rename failed');
         });
       });
 
       var delBtn = document.createElement('button');
-      delBtn.className = 'text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md w-7 h-7 flex items-center justify-center transition';
+      delBtn.className = 'text-brand-700/50 hover:text-red-600 hover:bg-white rounded-full w-6 h-6 flex items-center justify-center transition';
       delBtn.title = 'Delete';
       delBtn.innerHTML = trashSvg;
-      delBtn.addEventListener('click', function(){
+      delBtn.addEventListener('click', function(e){
+        e.stopPropagation();
         if (!confirm('Delete category "' + cat.name + '"? Paddles tagged with it will keep the tag in the sheet until you edit them.')) return;
         delBtn.disabled = true;
         delBtn.innerHTML = spinnerSvg;
         api('delete_category', { id: cat.id }).then(function(r){
-          if (r.success) { showToast('Category deleted'); loadCategories(true); }
+          if (r.success) { showToast('Category deleted'); loadCategories(); }
           else { showToast(r.error || 'Delete failed'); delBtn.disabled = false; delBtn.innerHTML = trashSvg; }
         }).catch(function(){ showToast('Delete failed'); delBtn.disabled = false; delBtn.innerHTML = trashSvg; });
       });
 
       actions.appendChild(editBtn);
       actions.appendChild(delBtn);
-      row.appendChild(nameSpan);
-      row.appendChild(actions);
-      listEl.appendChild(row);
+      chip.appendChild(nameSpan);
+      chip.appendChild(actions);
+      listEl.appendChild(chip);
     });
   }
 
@@ -93,7 +94,7 @@ window.bpAdminCategories = (function(){
     if (!name) return;
     withSpinner(addBtn, 'Adding...', function(){
       return api('add_category', { name: name }).then(function(r){
-        if (r.success) { newInput.value = ''; showToast('Category added'); loadCategories(true); }
+        if (r.success) { newInput.value = ''; showToast('Category added'); loadCategories(); }
         else showToast(r.error || 'Add failed');
       }).catch(function(){ showToast('Add failed'); });
     });
@@ -104,7 +105,7 @@ window.bpAdminCategories = (function(){
     loadCategories();
   });
   window.bpAdmin.onTab('categories', function(){
-    loadCategories(true);
+    loadCategories();
   });
 
   return {
