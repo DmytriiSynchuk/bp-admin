@@ -2,6 +2,9 @@
 // Questions are hard-coded in V0. Categories per answer are configured by Ben
 // through the Quiz Mapping admin screen.
 //
+// DUPR ranges (Q5) and budget brackets (Q31) live ONLY in the Apps Script
+// backend (FILTER_ANSWERS). Do NOT add duprMin/duprMax/budgetMax here.
+//
 // Question types:
 //   "single"   - single-choice radio buttons
 //   "multi"    - multi-select checkboxes (Q30 only)
@@ -74,12 +77,12 @@ window.BP_QUESTIONS = [
     filter: 'dupr',
     title: 'What is your current skill level?',
     answers: [
-      { id: 'q5_beginner', label: 'Beginner / newer player', duprMin: 0, duprMax: 2.9 },
-      { id: 'q5_30', label: 'Around 3.0', duprMin: 2.8, duprMax: 3.4 },
-      { id: 'q5_35', label: 'Around 3.5', duprMin: 3.3, duprMax: 3.9 },
-      { id: 'q5_40', label: 'Around 4.0', duprMin: 3.8, duprMax: 4.4 },
-      { id: 'q5_45', label: '4.5+', duprMin: 4.3, duprMax: 7.0 },
-      { id: 'q5_unsure', label: "I'm not sure", duprMin: 0, duprMax: 7.0 }
+      { id: 'q5_beginner', label: 'Beginner / newer player' },
+      { id: 'q5_30', label: 'Around 3.0' },
+      { id: 'q5_35', label: 'Around 3.5' },
+      { id: 'q5_40', label: 'Around 4.0' },
+      { id: 'q5_45', label: '4.5+' },
+      { id: 'q5_unsure', label: "I'm not sure" }
     ]
   },
   {
@@ -373,12 +376,12 @@ window.BP_QUESTIONS = [
     filter: 'budget',
     title: "What is your preferred paddle budget?",
     answers: [
-      { id: 'q31_under25', label: 'Under $25', budgetMax: 25 },
-      { id: 'q31_51to100', label: '$51 to $100', budgetMax: 100 },
-      { id: 'q31_101to200', label: '$101 to $200', budgetMax: 200 },
-      { id: 'q31_201to300', label: '$201 to $300', budgetMax: 300 },
-      { id: 'q31_301plus', label: '$301+', budgetMax: 99999 },
-      { id: 'q31_flexible', label: "I'm flexible for the right paddle", budgetMax: 99999 }
+      { id: 'q31_under25', label: 'Under $25' },
+      { id: 'q31_51to100', label: '$51 to $100' },
+      { id: 'q31_101to200', label: '$101 to $200' },
+      { id: 'q31_201to300', label: '$201 to $300' },
+      { id: 'q31_301plus', label: '$301+' },
+      { id: 'q31_flexible', label: "I'm flexible for the right paddle" }
     ]
   }
 ];
